@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+    <p id = "codeText"></p>
+<script>
+        function createBox() {
+            let canvas = document.createElement("canvas");
+            canvas.width = 500;
+            canvas.height = 300;
+            canvas.style.border = "1px solid black";
+    
+            document.body.appendChild(canvas);
+            
+            let ctxOne = canvas.getContext("2d");
+
+            function showOptions() {
+                let heightInput = document.createElement("input");
+                heightInput.type = "text";
+                heightInput.id = "heightInput";
+                heightInput.placeholder = "Enter Height";
+                document.body.appendChild(heightInput);
+
+                let buttonHeightInput = document.createElement("button");
+                buttonHeightInput.innerText = "Set Height";
+                buttonHeightInput.onclick = enterHeight;
+                document.body.appendChild(buttonHeightInput);
+
+                function enterHeight() {
+                    let newHeight = parseInt(document.getElementById("heightInput").value);
+                    if (!isNaN(newHeight)) {
+                        canvas.height = newHeight;
+                    } else {
+                        alert("Please enter a valid number for height.");
+                    }
+                }
+
+                let widthInput = document.createElement("input");
+                widthInput.type = "text";
+                widthInput.id = "widthInput";
+                widthInput.placeholder = "Enter Width";
+                document.body.appendChild(widthInput);
+
+                let buttonWidthInput = document.createElement("button");
+                buttonWidthInput.innerText = "Set Width";
+                buttonWidthInput.onclick = enterWidth;
+                document.body.appendChild(buttonWidthInput);
+
+                function enterWidth() {
+                    let newWidth = parseInt(document.getElementById("widthInput").value);
+                    if (!isNaN(newWidth)) {
+                        canvas.width = newWidth;
+                    } else {
+                        alert("Please enter a valid number for width.");
+                    }
+                }      
+
+                let backgroundInput = document.createElement("input");
+                backgroundInput.type = "text";
+                backgroundInput.id = "backgroundInput";
+                backgroundInput.placeholder = "Enter Background Color";
+                document.body.appendChild(backgroundInput);
+
+                let buttonBackgroundInput = document.createElement("button");
+                buttonBackgroundInput.innerText = "Set Background";
+                buttonBackgroundInput.onclick = function() { enterBackground(canvas); };
+                document.body.appendChild(buttonBackgroundInput);
+            }
+
+            showOptions();
+        }
+
+        function enterBackground(targetCanvas) {
+            let colorOfBG = document.getElementById("backgroundInput").value;
+            let canvas = targetCanvas || document.getElementById("myCanvas");
+
+            if (colorOfBG === "white") {
+                canvas.style.backgroundColor = "white";                    
+            } else if (colorOfBG === "black") {
+                canvas.style.backgroundColor = "black";                    
+            } else if (colorOfBG === "red") {
+                canvas.style.backgroundColor = "red";
+            } else if (colorOfBG === "orange") {
+                canvas.style.backgroundColor = "orange";
+            } else if (colorOfBG === "yellow") {
+                canvas.style.backgroundColor = "yellow";
+            } else if (colorOfBG === "green") {
+                canvas.style.backgroundColor = "green";
+            } else if (colorOfBG === "blue") {
+                canvas.style.backgroundColor = "blue";
+            } else if (colorOfBG === "purple") {
+                canvas.style.backgroundColor = "purple";
+            } else if (colorOfBG === "none") {
+                canvas.style.backgroundColor = "powder-blue";
+            } else {
+                alert("Please enter a color of the rainbow, black, white, or none.");
+            }
+        }
+        createBox();
+        
+function createCode() {
+    let codePartOne = " and the other variable worked too";
+    let code = "&lt;!DOCTYPE html&gt;<br>&lt;html&gt;<br>&lt;head&gt;<br>&lt;/head&gt;<br>&lt;body&gt;<br> &lt;script&gt;<br> document.createElement('canvas');<br>&lt;/script&gt;<br>&lt;/body&gt;<br>&lt;/html&gt;<br>";
+    let codeText = document.getElementById("codeText");
+    codeText.innerHTML = code;
+}
+
+createCode();
+
+</script>
+</body>
+</html>
