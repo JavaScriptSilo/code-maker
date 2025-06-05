@@ -9,14 +9,15 @@
             background: linear-gradient(120deg, #1e3c72, #2a5298, #00c6ff 90%);
             color: #fff;
             display: flex;
-            align-items: center;
-            justify-content: center;
         }
         </style>
 </head>
 <body>
     <p id = "codeText"></p>
 <script>
+    let canvasWidth = 500;
+    let canvasHeight = 300;
+    let canvasBackground = "none";
         function createBox() {
             let canvas = document.createElement("canvas");
             canvas.width = 500;
@@ -43,6 +44,8 @@
                     let newHeight = parseInt(document.getElementById("heightInput").value);
                     if (!isNaN(newHeight)) {
                         canvas.height = newHeight;
+                        canvasHeight = newHeight;
+                        createCode();
                     } else {
                         alert("Please enter a valid number for height.");
                     }
@@ -63,6 +66,8 @@
                     let newWidth = parseInt(document.getElementById("widthInput").value);
                     if (!isNaN(newWidth)) {
                         canvas.width = newWidth;
+                        canvasWidth = newWidth;
+                        createCode();
                     } else {
                         alert("Please enter a valid number for width.");
                     }
@@ -88,23 +93,41 @@
             let canvas = targetCanvas || document.getElementById("myCanvas");
 
             if (colorOfBG === "white") {
-                canvas.style.backgroundColor = "white";                    
+                canvasBackground = "white";
+                canvas.style.backgroundColor = "white";    
+                createCode();                
             } else if (colorOfBG === "black") {
-                canvas.style.backgroundColor = "black";                    
+                canvasBackground = "black";
+                canvas.style.backgroundColor = "black";  
+                createCode();                  
             } else if (colorOfBG === "red") {
+                canvasBackground = "red";
                 canvas.style.backgroundColor = "red";
+                createCode();
             } else if (colorOfBG === "orange") {
+                canvasBackground = "orange";
                 canvas.style.backgroundColor = "orange";
+                createCode();
             } else if (colorOfBG === "yellow") {
+                canvasBackground = "yellow";
                 canvas.style.backgroundColor = "yellow";
+                createCode();
             } else if (colorOfBG === "green") {
+                canvasBackground = "green";
                 canvas.style.backgroundColor = "green";
+                createCode();
             } else if (colorOfBG === "blue") {
+                canvasBackground = "blue";
                 canvas.style.backgroundColor = "blue";
+                createCode();
             } else if (colorOfBG === "purple") {
+                canvasBackground = "purple";
                 canvas.style.backgroundColor = "purple";
+                createCode();
             } else if (colorOfBG === "none") {
                 canvas.style.backgroundColor = "powder-blue";
+                canvasBackground = "";
+                createCode();
             } else {
                 alert("Please enter a color of the rainbow, black, white, or none.");
             }
@@ -113,7 +136,7 @@
         
 function createCode() {
     let codePartOne = " and the other variable worked too";
-    let code = "&lt;!DOCTYPE html&gt;<br>&lt;html&gt;<br>&lt;head&gt;<br>&lt;/head&gt;<br>&lt;body&gt;<br> &lt;script&gt;<br> document.createElement('canvas');<br>&lt;/script&gt;<br>&lt;/body&gt;<br>&lt;/html&gt;<br>";
+    let code = "&lt;!DOCTYPE html&gt;<br>&lt;html&gt;<br>&lt;head&gt;<br>&lt;/head&gt;<br>&lt;body&gt;<br> &lt;script&gt;<br>let canvas = document.createElement('canvas');<br>canvas.width = " + canvasWidth + ";<br>canvas.height = " + canvasHeight + ";<br>canvas.style.backgroundColor = '" + canvasBackground + "';<br>document.body.appendChild(canvas);<br>&lt;/script&gt;<br>&lt;/body&gt;<br>&lt;/html&gt;<br>";
     let codeText = document.getElementById("codeText");
     codeText.innerHTML = code;
 }
