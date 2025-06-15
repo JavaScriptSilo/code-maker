@@ -1,0 +1,18 @@
+        body {
+            min-height: 100vh;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(120deg, #1e3c72, #2a5298, #00c6ff 90%);
+            color: #fff;
+        }
+        .topBar {
+            position: fixed;
+            margin-left: 25px;
+            width: 1300px;
+            height: 50px;
+            background-color: #2A2D89;
+            border-radius: 20px;
+        }
+        #homelink {
+            font-family: "Comic Sans MS", "Comic Sans", cursive;
+            font-size: 25px;
+        }
