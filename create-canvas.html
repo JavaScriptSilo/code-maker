@@ -9,7 +9,7 @@
             background: linear-gradient(120deg, #1e3c72, #2a5298, #00c6ff 90%);
             color: #fff;
         }
-        .topbar {
+        .topBar {
             width: 1000px;
             height: 50px;
             background-color: #2A2D89;
@@ -30,6 +30,7 @@
     let canvasBackground = "none";
         function createBox() {
             let canvas = document.createElement("canvas");
+            canvas.id = "myCanvas";
             canvas.width = 500;
             canvas.height = 300;
             canvas.style.border = "1px solid black";
