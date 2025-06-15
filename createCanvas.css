@@ -12,7 +12,8 @@
             background-color: #2A2D89;
             border-radius: 20px;
         }
-        #homelink {
+        #homelink {      
+            margin-left: 25px;
             font-family: "Comic Sans MS", "Comic Sans", cursive;
             font-size: 25px;
         }
