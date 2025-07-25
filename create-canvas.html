@@ -11,6 +11,7 @@
     <div id="codeBox">
         <p id="codeText"></p>
     </div>
+    <button id="drawToggle">Toggle Square Drawing</button>
 <script>
     let canvasWidth = 500;
     let canvasHeight = 300;
@@ -130,7 +131,32 @@
                 alert("Please enter a color of the rainbow, black, white, or none.");
             }
         }
-        createBox();
+        
+
+    let isDrawing = false;
+function setupDrawing() {
+    let isDrawing = false;
+
+    const drawToggle = document.getElementById("drawToggle");
+    drawToggle.onclick = function() {
+        isDrawing = !isDrawing;
+    };
+
+    document.addEventListener("click", function(e) {
+        const canvas = document.getElementById("myCanvas");
+        if (!canvas || e.target !== canvas) return;
+
+        const ctx = canvas.getContext("2d");
+        const rectSize = 50;
+        const rectX = e.offsetX - rectSize / 2;
+        const rectY = e.offsetY - rectSize / 2;
+        ctx.fillStyle = "black";
+        ctx.fillRect(rectX, rectY, rectSize, rectSize);
+    });
+}
+
+createBox();
+setupDrawing();
         
 function createCode() {
     let codePartOne = " and the other variable worked too";
