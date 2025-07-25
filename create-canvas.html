@@ -12,6 +12,7 @@
         <p id="codeText"></p>
     </div>
     <button id="drawToggle">Toggle Square Drawing</button>
+    <button id="clearCanvas">Clear Canvas</button>
 <script>
     let canvasWidth = 500;
     let canvasHeight = 300;
@@ -91,41 +92,10 @@
             let colorOfBG = document.getElementById("backgroundInput").value;
             let canvas = targetCanvas || document.getElementById("myCanvas");
 
-            if (colorOfBG === "white") {
-                canvasBackground = "white";
-                canvas.style.backgroundColor = "white";    
-                createCode();                
-            } else if (colorOfBG === "black") {
-                canvasBackground = "black";
-                canvas.style.backgroundColor = "black";  
-                createCode();                  
-            } else if (colorOfBG === "red") {
-                canvasBackground = "red";
-                canvas.style.backgroundColor = "red";
-                createCode();
-            } else if (colorOfBG === "orange") {
-                canvasBackground = "orange";
-                canvas.style.backgroundColor = "orange";
-                createCode();
-            } else if (colorOfBG === "yellow") {
-                canvasBackground = "yellow";
-                canvas.style.backgroundColor = "yellow";
-                createCode();
-            } else if (colorOfBG === "green") {
-                canvasBackground = "green";
-                canvas.style.backgroundColor = "green";
-                createCode();
-            } else if (colorOfBG === "blue") {
-                canvasBackground = "blue";
-                canvas.style.backgroundColor = "blue";
-                createCode();
-            } else if (colorOfBG === "purple") {
-                canvasBackground = "purple";
-                canvas.style.backgroundColor = "purple";
-                createCode();
-            } else if (colorOfBG === "none") {
-                canvas.style.backgroundColor = "powder-blue";
-                canvasBackground = "";
+            const validColors = new Set(["white", "black", "red", "orange", "yellow", "green", "blue", "purple", "none"]);
+            if (validColors.has(colorOfBG)) {
+                canvas.style.backgroundColor = colorOfBG === "none" ? "powder-blue" : colorOfBG;
+                canvasBackground = colorOfBG === "none" ? "" : colorOfBG;
                 createCode();
             } else {
                 alert("Please enter a color of the rainbow, black, white, or none.");
@@ -133,7 +103,8 @@
         }
         
 
-    let isDrawing = false;
+let isDrawing = false;
+
 function setupDrawing() {
     const drawToggle = document.getElementById("drawToggle");
     drawToggle.onclick = function() {
@@ -142,20 +113,37 @@ function setupDrawing() {
 
     document.addEventListener("click", function(e) {
         const canvas = document.getElementById("myCanvas");
-        if (!canvas || e.target !== canvas) return;
+
+        // Ensure canvas exists, the user clicked on it, and drawing mode is active
+        if (!canvas || e.target !== canvas || !isDrawing) return;
 
         const ctx = canvas.getContext("2d");
         const rectSize = 50;
         const rectX = e.offsetX - rectSize / 2;
         const rectY = e.offsetY - rectSize / 2;
+
         ctx.fillStyle = "black";
         ctx.fillRect(rectX, rectY, rectSize, rectSize);
     });
 }
 
+window.onload = function() {
+    createBox();
+    setupDrawing();
+    createCode();
 
-createBox();
-setupDrawing();
+    const clearButton = document.getElementById("clearCanvas");
+    clearButton.onclick = function () {
+        const canvas = document.getElementById("myCanvas");
+        if (canvas) {
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    };
+};
+    
+//createBox();
+//setupDrawing();
         
 function createCode() {
     let codePartOne = " and the other variable worked too";
