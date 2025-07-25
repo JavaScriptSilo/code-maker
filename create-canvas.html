@@ -141,9 +141,9 @@ function createCode() {
         &lt;body&gt;<br>
         &lt;script&gt;<br>
         let canvas = document.createElement('canvas');<br>
-        canvas.width = canvasWidth;<br>
-        canvas.height = canvasHeight;<br>
-        canvas.style.backgroundColor = canvasBackground;<br>
+        canvas.width = ` + canvasWidth + `;<br>
+        canvas.height = ` + canvasHeight + `;<br>
+        canvas.style.backgroundColor = ` + canvasBackground + `;<br>
         document.body.appendChild(canvas);<br>&lt;/script&gt;<br>
         &lt;/body&gt;<br>
         &lt;/html&gt;<br>`;
