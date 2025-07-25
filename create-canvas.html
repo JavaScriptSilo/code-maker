@@ -135,8 +135,6 @@
 
     let isDrawing = false;
 function setupDrawing() {
-    let isDrawing = false;
-
     const drawToggle = document.getElementById("drawToggle");
     drawToggle.onclick = function() {
         isDrawing = !isDrawing;
@@ -154,6 +152,7 @@ function setupDrawing() {
         ctx.fillRect(rectX, rectY, rectSize, rectSize);
     });
 }
+
 
 createBox();
 setupDrawing();
