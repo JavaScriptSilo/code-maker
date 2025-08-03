@@ -8,113 +8,106 @@
     <div class="topBar">
         <a href="index.html" id="homelink">Home</a>
     </div>
+
     <div id="codeBox">
         <p id="codeText"></p>
     </div>
+
     <button id="drawToggle">Toggle Square Drawing</button>
     <button id="clearCanvas">Clear Canvas</button>
+
 <script>
-    let canvasWidth = 500;
-    let canvasHeight = 300;
-    let canvasBackground = "none";
-        function createBox() {
-            let canvas = document.createElement("canvas");
-            canvas.id = "myCanvas";
-            canvas.width = 500;
-            canvas.height = 300;
-            canvas.style.border = "1px solid black";
-    
-            document.body.appendChild(canvas);
-            
-            let ctxOne = canvas.getContext("2d");
-
-            function showOptions() {
-                let heightInput = document.createElement("input");
-                heightInput.type = "text";
-                heightInput.id = "heightInput";
-                heightInput.placeholder = "Enter Height";
-                document.body.appendChild(heightInput);
-
-                let buttonHeightInput = document.createElement("button");
-                buttonHeightInput.innerText = "Set Height";
-                buttonHeightInput.onclick = enterHeight;
-                document.body.appendChild(buttonHeightInput);
-
-                function enterHeight() {
-                    let newHeight = parseInt(document.getElementById("heightInput").value);
-                    if (!isNaN(newHeight)) {
-                        canvas.height = newHeight;
-                        canvasHeight = newHeight;
-                        createCode();
-                    } else {
-                        alert("Please enter a valid number for height.");
-                    }
-                }
-
-                let widthInput = document.createElement("input");
-                widthInput.type = "text";
-                widthInput.id = "widthInput";
-                widthInput.placeholder = "Enter Width";
-                document.body.appendChild(widthInput);
-
-                let buttonWidthInput = document.createElement("button");
-                buttonWidthInput.innerText = "Set Width";
-                buttonWidthInput.onclick = enterWidth;
-                document.body.appendChild(buttonWidthInput);
-
-                function enterWidth() {
-                    let newWidth = parseInt(document.getElementById("widthInput").value);
-                    if (!isNaN(newWidth)) {
-                        canvas.width = newWidth;
-                        canvasWidth = newWidth;
-                        createCode();
-                    } else {
-                        alert("Please enter a valid number for width.");
-                    }
-                }      
-
-                let backgroundInput = document.createElement("input");
-                backgroundInput.type = "text";
-                backgroundInput.id = "backgroundInput";
-                backgroundInput.placeholder = "Enter Background Color";
-                document.body.appendChild(backgroundInput);
-
-                let buttonBackgroundInput = document.createElement("button");
-                buttonBackgroundInput.innerText = "Set Background";
-                buttonBackgroundInput.onclick = function() { enterBackground(canvas); };
-                document.body.appendChild(buttonBackgroundInput);
-            }
-
-            showOptions();
-        }
-
-        function enterBackground(targetCanvas) {
-            let colorOfBG = document.getElementById("backgroundInput").value;
-            let canvas = targetCanvas || document.getElementById("myCanvas");
-
-            const validColors = new Set(["white", "black", "red", "orange", "yellow", "green", "blue", "purple", "none"]);
-            if (validColors.has(colorOfBG)) {
-                canvas.style.backgroundColor = colorOfBG === "none" ? "powder-blue" : colorOfBG;
-                canvasBackground = colorOfBG === "none" ? "" : colorOfBG;
-                createCode();
-            } else {
-                alert("Please enter a color of the rainbow, black, white, or none.");
-            }
-        }
-        
-
+let canvasWidth = 500;
+let canvasHeight = 300;
+let canvasBackground = "none";
 let isDrawing = false;
+let squares = [];
+
+function createBox() {
+    const canvas = document.createElement("canvas");
+    canvas.id = "myCanvas";
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+    canvas.style.border = "1px solid black";
+    document.body.appendChild(canvas);
+
+    showOptions();
+}
+
+function showOptions() {
+    // Height input
+    const heightInput = document.createElement("input");
+    heightInput.type = "text";
+    heightInput.id = "heightInput";
+    heightInput.placeholder = "Enter Height";
+    document.body.appendChild(heightInput);
+
+    const buttonHeightInput = document.createElement("button");
+    buttonHeightInput.innerText = "Set Height";
+    buttonHeightInput.onclick = () => {
+        const newHeight = parseInt(heightInput.value);
+        if (!isNaN(newHeight)) {
+            canvasHeight = newHeight;
+            document.getElementById("myCanvas").height = newHeight;
+            createCode();
+        } else {
+            alert("Please enter a valid number for height.");
+        }
+    };
+    document.body.appendChild(buttonHeightInput);
+
+    // Width input
+    const widthInput = document.createElement("input");
+    widthInput.type = "text";
+    widthInput.id = "widthInput";
+    widthInput.placeholder = "Enter Width";
+    document.body.appendChild(widthInput);
+
+    const buttonWidthInput = document.createElement("button");
+    buttonWidthInput.innerText = "Set Width";
+    buttonWidthInput.onclick = () => {
+        const newWidth = parseInt(widthInput.value);
+        if (!isNaN(newWidth)) {
+            canvasWidth = newWidth;
+            document.getElementById("myCanvas").width = newWidth;
+            createCode();
+        } else {
+            alert("Please enter a valid number for width.");
+        }
+    };
+    document.body.appendChild(buttonWidthInput);
+
+    // Background input
+    const backgroundInput = document.createElement("input");
+    backgroundInput.type = "text";
+    backgroundInput.id = "backgroundInput";
+    backgroundInput.placeholder = "Enter Background Color";
+    document.body.appendChild(backgroundInput);
+
+    const buttonBackgroundInput = document.createElement("button");
+    buttonBackgroundInput.innerText = "Set Background";
+    buttonBackgroundInput.onclick = () => {
+        const canvas = document.getElementById("myCanvas");
+        const color = backgroundInput.value;
+        const validColors = new Set(["white", "black", "red", "orange", "yellow", "green", "blue", "purple", "none"]);
+        if (validColors.has(color)) {
+            canvas.style.backgroundColor = color === "none" ? "powderblue" : color;
+            canvasBackground = color === "none" ? "" : color;
+            createCode();
+        } else {
+            alert("Please enter a color of the rainbow, black, white, or none.");
+        }
+    };
+    document.body.appendChild(buttonBackgroundInput);
+}
 
 function setupDrawing() {
-    const drawToggle = document.getElementById("drawToggle");
-    drawToggle.onclick = function() {
+    document.getElementById("drawToggle").onclick = () => {
         isDrawing = !isDrawing;
     };
 
     document.addEventListener("click", function(e) {
         const canvas = document.getElementById("myCanvas");
-
-        // Ensure canvas exists, the user clicked on it, and drawing mode is active
         if (!canvas || e.target !== canvas || !isDrawing) return;
 
         const ctx = canvas.getContext("2d");
@@ -124,48 +117,53 @@ function setupDrawing() {
 
         ctx.fillStyle = "black";
         ctx.fillRect(rectX, rectY, rectSize, rectSize);
+
+        squares.push({x: rectX, y: rectY});
+        createCode();
     });
-}
 
-window.onload = function() {
-    createBox();
-    setupDrawing();
-    createCode();
-
-    const clearButton = document.getElementById("clearCanvas");
-    clearButton.onclick = function () {
+    document.getElementById("clearCanvas").onclick = () => {
         const canvas = document.getElementById("myCanvas");
         if (canvas) {
             const ctx = canvas.getContext("2d");
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            squares = [];
+            createCode();
         }
     };
-};
-    
-//createBox();
-//setupDrawing();
-        
-function createCode() {
-    let codePartOne = " and the other variable worked too";
-    let code = `&lt;!DOCTYPE html&gt;<br>
-        &lt;html&gt;<br>
-        &lt;head&gt;<br>
-        &lt;/head&gt;<br>
-        &lt;body&gt;<br>
-        &lt;script&gt;<br>
-        let canvas = document.createElement('canvas');<br>
-        canvas.width = ` + canvasWidth + `;<br>
-        canvas.height = ` + canvasHeight + `;<br>
-        canvas.style.backgroundColor = ` + canvasBackground + `;<br>
-        document.body.appendChild(canvas);<br>&lt;/script&gt;<br>
-        &lt;/body&gt;<br>
-        &lt;/html&gt;<br>`;
-    let codeText = document.getElementById("codeText");
-    codeText.innerHTML = code;
 }
 
-createCode();
+function createCode() {
+    let squareCode = "";
+    for (const sq of squares) {
+        squareCode += `ctx.fillRect(${sq.x}, ${sq.y}, 50, 50);<br>`;
+    }
 
+    let code = `&lt;!DOCTYPE html&gt;<br>
+        &lt;html&gt;<br>
+        &lt;head&gt;&lt;/head&gt;<br>
+        &lt;body&gt;<br>
+        &lt;script&gt;<br>
+        const canvas = document.createElement('canvas');<br>
+        const ctx = canvas.getContext("2d");<br>
+        canvas.width = ${canvasWidth};<br>
+        canvas.height = ${canvasHeight};<br>
+        canvas.style.backgroundColor = '${canvasBackground}';<br>
+        ctx.fillStyle = "black";<br>
+        ${squareCode}
+        document.body.appendChild(canvas);<br>
+        &lt;/script&gt;<br>
+        &lt;/body&gt;<br>
+        &lt;/html&gt;`;
+
+    document.getElementById("codeText").innerHTML = code;
+}
+
+window.onload = () => {
+    createBox();
+    setupDrawing();
+    createCode();
+};
 </script>
 </body>
 </html>
