@@ -94,6 +94,8 @@
     <button id="drawToggle">Toggle Square Drawing</button>
     <button id="clearCanvas">Clear Canvas</button>
   </div>
+  
+  <div id="canvasContainer"></div>
 
   <div id="codeBox">
     <p id="codeText"></p>
@@ -115,7 +117,7 @@
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
     canvas.style.border = "1px solid black";
-    document.body.appendChild(canvas);
+    document.getElementById("canvasContainer").appendChild(canvas);
   }
 
   function setupControls() {
