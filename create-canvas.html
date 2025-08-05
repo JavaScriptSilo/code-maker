@@ -1,196 +1,198 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Code Maker</title>
-    <link rel="stylesheet" href="createCanvas.css"/>
-    <style>
-        body {
-            min-height: 100vh;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(120deg, #1e3c72, #2a5298, #00c6ff 90%);
-            color: #fff;
-        }
-        .topBar {
-            position: fixed;
-            margin-left: 25px;
-            width: 1300px;
-            height: 50px;
-            background-color: #2A2D89;
-            border-radius: 20px;
-        }
-        #homelink {      
-            margin-left: 25px;
-            font-family: "Comic Sans MS", "Comic Sans", cursive;
-            font-size: 25px;
-        }
-        #codeBox {
-            position: absolute;
-            top: 500px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Code Maker</title>
+  <link rel="stylesheet" href="createCanvas.css"/>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(120deg, #1e3c72, #2a5298, #00c6ff 90%);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .topBar {
+      width: 100%;
+      height: 60px;
+      background-color: #2A2D89;
+      display: flex;
+      align-items: center;
+      padding: 0 30px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    #homelink {
+      font-family: "Comic Sans MS", "Comic Sans", cursive;
+      font-size: 26px;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .controls {
+      margin-top: 80px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .controls input, .controls button {
+      padding: 10px 15px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .controls input {
+      width: 200px;
+    }
+
+    button {
+      background-color: #444;
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s ease-in-out;
+    }
+
+    button:hover {
+      background-color: #666;
+    }
+
+    #codeBox {
+      margin-top: 40px;
+      max-width: 90%;
+      background: rgba(0,0,0,0.4);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    canvas {
+      margin-top: 30px;
+    }
+  </style>
 </head>
 <body>
-    <div class="topBar">
-        <a href="index.html" id="homelink">Home</a>
-    </div>
+  <div class="topBar">
+    <a href="index.html" id="homelink">Home</a>
+  </div>
 
-    <div id="codeBox">
-        <p id="codeText"></p>
-    </div>
-
+  <div class="controls" id="canvasControls">
+    <input type="text" id="heightInput" placeholder="Enter Height">
+    <button id="setHeight">Set Height</button>
+    <input type="text" id="widthInput" placeholder="Enter Width">
+    <button id="setWidth">Set Width</button>
+    <input type="text" id="backgroundInput" placeholder="Enter Background Color">
+    <button id="setBackground">Set Background</button>
     <button id="drawToggle">Toggle Square Drawing</button>
     <button id="clearCanvas">Clear Canvas</button>
+  </div>
+
+  <div id="codeBox">
+    <p id="codeText"></p>
+  </div>
 
 <script>
-let canvasWidth = 500;
-let canvasHeight = 300;
-let canvasBackground = "none";
-let isDrawing = false;
-let squares = [];
+  // JavaScript unchanged — wiring it to the new button IDs
+  const canvasWidthDefault = 500;
+  const canvasHeightDefault = 300;
+  let canvasWidth = canvasWidthDefault;
+  let canvasHeight = canvasHeightDefault;
+  let canvasBackground = "none";
+  let isDrawing = false;
+  let squares = [];
 
-function createBox() {
+  function createBox() {
     const canvas = document.createElement("canvas");
     canvas.id = "myCanvas";
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
     canvas.style.border = "1px solid black";
     document.body.appendChild(canvas);
+  }
 
-    showOptions();
-}
-
-function showOptions() {
-    // Height input
-    const heightInput = document.createElement("input");
-    heightInput.type = "text";
-    heightInput.id = "heightInput";
-    heightInput.placeholder = "Enter Height";
-    document.body.appendChild(heightInput);
-
-    const buttonHeightInput = document.createElement("button");
-    buttonHeightInput.innerText = "Set Height";
-    buttonHeightInput.onclick = () => {
-        const newHeight = parseInt(heightInput.value);
-        if (!isNaN(newHeight)) {
-            canvasHeight = newHeight;
-            document.getElementById("myCanvas").height = newHeight;
-            createCode();
-        } else {
-            alert("Please enter a valid number for height.");
-        }
+  function setupControls() {
+    document.getElementById("setHeight").onclick = () => {
+      const newHeight = parseInt(document.getElementById("heightInput").value);
+      if (!isNaN(newHeight)) {
+        canvasHeight = newHeight;
+        document.getElementById("myCanvas").height = newHeight;
+        createCode();
+      }
     };
-    document.body.appendChild(buttonHeightInput);
 
-    // Width input
-    const widthInput = document.createElement("input");
-    widthInput.type = "text";
-    widthInput.id = "widthInput";
-    widthInput.placeholder = "Enter Width";
-    document.body.appendChild(widthInput);
-
-    const buttonWidthInput = document.createElement("button");
-    buttonWidthInput.innerText = "Set Width";
-    buttonWidthInput.onclick = () => {
-        const newWidth = parseInt(widthInput.value);
-        if (!isNaN(newWidth)) {
-            canvasWidth = newWidth;
-            document.getElementById("myCanvas").width = newWidth;
-            createCode();
-        } else {
-            alert("Please enter a valid number for width.");
-        }
+    document.getElementById("setWidth").onclick = () => {
+      const newWidth = parseInt(document.getElementById("widthInput").value);
+      if (!isNaN(newWidth)) {
+        canvasWidth = newWidth;
+        document.getElementById("myCanvas").width = newWidth;
+        createCode();
+      }
     };
-    document.body.appendChild(buttonWidthInput);
 
-    // Background input
-    const backgroundInput = document.createElement("input");
-    backgroundInput.type = "text";
-    backgroundInput.id = "backgroundInput";
-    backgroundInput.placeholder = "Enter Background Color";
-    document.body.appendChild(backgroundInput);
-
-    const buttonBackgroundInput = document.createElement("button");
-    buttonBackgroundInput.innerText = "Set Background";
-    buttonBackgroundInput.onclick = () => {
-        const canvas = document.getElementById("myCanvas");
-        const color = backgroundInput.value;
-        const validColors = new Set(["white", "black", "red", "orange", "yellow", "green", "blue", "purple", "none"]);
-        if (validColors.has(color)) {
-            canvas.style.backgroundColor = color === "none" ? "powderblue" : color;
-            canvasBackground = color === "none" ? "" : color;
-            createCode();
-        } else {
-            alert("Please enter a color of the rainbow, black, white, or none.");
-        }
+    document.getElementById("setBackground").onclick = () => {
+      const color = document.getElementById("backgroundInput").value;
+      const canvas = document.getElementById("myCanvas");
+      const validColors = new Set(["white","black","red","orange","yellow","green","blue","purple","none"]);
+      if (validColors.has(color)) {
+        canvas.style.backgroundColor = color === "none" ? "powderblue" : color;
+        canvasBackground = color === "none" ? "" : color;
+        createCode();
+      }
     };
-    document.body.appendChild(buttonBackgroundInput);
-}
 
-function setupDrawing() {
     document.getElementById("drawToggle").onclick = () => {
-        isDrawing = !isDrawing;
+      isDrawing = !isDrawing;
+    };
+
+    document.getElementById("clearCanvas").onclick = () => {
+      const canvas = document.getElementById("myCanvas");
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      squares = [];
+      createCode();
     };
 
     document.addEventListener("click", function(e) {
-        const canvas = document.getElementById("myCanvas");
-        if (!canvas || e.target !== canvas || !isDrawing) return;
+      const canvas = document.getElementById("myCanvas");
+      if (!canvas || e.target !== canvas || !isDrawing) return;
+      const ctx = canvas.getContext("2d");
+      const rectSize = 50;
+      const rectX = e.offsetX - rectSize / 2;
+      const rectY = e.offsetY - rectSize / 2;
 
-        const ctx = canvas.getContext("2d");
-        const rectSize = 50;
-        const rectX = e.offsetX - rectSize / 2;
-        const rectY = e.offsetY - rectSize / 2;
-
-        ctx.fillStyle = "black";
-        ctx.fillRect(rectX, rectY, rectSize, rectSize);
-
-        squares.push({x: rectX, y: rectY});
-        createCode();
+      ctx.fillStyle = "black";
+      ctx.fillRect(rectX, rectY, rectSize, rectSize);
+      squares.push({x: rectX, y: rectY});
+      createCode();
     });
+  }
 
-    document.getElementById("clearCanvas").onclick = () => {
-        const canvas = document.getElementById("myCanvas");
-        if (canvas) {
-            const ctx = canvas.getContext("2d");
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            squares = [];
-            createCode();
-        }
-    };
-}
-
-function createCode() {
-    let squareCode = "";
-    for (const sq of squares) {
-        squareCode += `ctx.fillRect(${sq.x}, ${sq.y}, 50, 50);<br>`;
-    }
-
-    let code = `&lt;!DOCTYPE html&gt;<br>
-        &lt;html&gt;<br>
-        &lt;head&gt;&lt;/head&gt;<br>
-        &lt;body&gt;<br>
-        &lt;script&gt;<br>
-        const canvas = document.createElement('canvas');<br>
-        const ctx = canvas.getContext("2d");<br>
-        canvas.width = ${canvasWidth};<br>
-        canvas.height = ${canvasHeight};<br>
-        canvas.style.backgroundColor = '${canvasBackground}';<br>
-        ctx.fillStyle = "black";<br>
-        ${squareCode}
-        document.body.appendChild(canvas);<br>
-        &lt;/script&gt;<br>
-        &lt;/body&gt;<br>
-        &lt;/html&gt;`;
-
+  function createCode() {
+    let squareCode = squares.map(sq => `ctx.fillRect(${sq.x}, ${sq.y}, 50, 50);<br>`).join("");
+    let code = `&lt;!DOCTYPE html&gt;<br>&lt;html&gt;<br>&lt;head&gt;&lt;/head&gt;<br>&lt;body&gt;<br>&lt;script&gt;<br>
+    const canvas = document.createElement('canvas');<br>
+    const ctx = canvas.getContext("2d");<br>
+    canvas.width = ${canvasWidth};<br>
+    canvas.height = ${canvasHeight};<br>
+    canvas.style.backgroundColor = '${canvasBackground}';<br>
+    ctx.fillStyle = "black";<br>${squareCode}document.body.appendChild(canvas);<br>
+    &lt;/script&gt;<br>&lt;/body&gt;<br>&lt;/html&gt;`;
     document.getElementById("codeText").innerHTML = code;
-}
+  }
 
-window.onload = () => {
+  window.onload = () => {
     createBox();
-    setupDrawing();
+    setupControls();
     createCode();
-};
+  };
 </script>
 </body>
 </html>
