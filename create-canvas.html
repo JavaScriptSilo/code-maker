@@ -8,7 +8,6 @@
     <div class="topBar">
         <a href="index.html" id="homelink">Home</a>
     </div>
-    <div id="buttonBar"></div>
 
     <div id="codeBox">
         <p id="codeText"></p>
@@ -23,7 +22,6 @@ let canvasHeight = 300;
 let canvasBackground = "none";
 let isDrawing = false;
 let squares = [];
-let btnbr = document.getElementById("buttonBar")
 
 function createBox() {
     const canvas = document.createElement("canvas");
@@ -42,7 +40,7 @@ function showOptions() {
     heightInput.type = "text";
     heightInput.id = "heightInput";
     heightInput.placeholder = "Enter Height";
-    document.btnbr.appendChild(heightInput);
+    document.body.appendChild(heightInput);
 
     const buttonHeightInput = document.createElement("button");
     buttonHeightInput.innerText = "Set Height";
@@ -56,14 +54,14 @@ function showOptions() {
             alert("Please enter a valid number for height.");
         }
     };
-    document.btnbr.appendChild(buttonHeightInput);
+    document.body.appendChild(buttonHeightInput);
 
     // Width input
     const widthInput = document.createElement("input");
     widthInput.type = "text";
     widthInput.id = "widthInput";
     widthInput.placeholder = "Enter Width";
-    document.btnbr.appendChild(widthInput);
+    document.body.appendChild(widthInput);
 
     const buttonWidthInput = document.createElement("button");
     buttonWidthInput.innerText = "Set Width";
@@ -77,14 +75,14 @@ function showOptions() {
             alert("Please enter a valid number for width.");
         }
     };
-    document.btnbr.appendChild(buttonWidthInput);
+    document.body.appendChild(buttonWidthInput);
 
     // Background input
     const backgroundInput = document.createElement("input");
     backgroundInput.type = "text";
     backgroundInput.id = "backgroundInput";
     backgroundInput.placeholder = "Enter Background Color";
-    document.btnbr.appendChild(backgroundInput);
+    document.body.appendChild(backgroundInput);
 
     const buttonBackgroundInput = document.createElement("button");
     buttonBackgroundInput.innerText = "Set Background";
@@ -100,7 +98,7 @@ function showOptions() {
             alert("Please enter a color of the rainbow, black, white, or none.");
         }
     };
-    document.btnbr.appendChild(buttonBackgroundInput);
+    document.body.appendChild(buttonBackgroundInput);
 }
 
 function setupDrawing() {
