@@ -91,6 +91,8 @@
     <button id="setWidth">Set Width</button>
     <input type="text" id="backgroundInput" placeholder="Enter Background Color">
     <button id="setBackground">Set Background</button>
+    <input type="text" id="squareSizeInput" placeholder="Enter Square Size">
+    <button id="squareSize">Change Square Size</button>
     <button id="drawToggle">Toggle Square Drawing</button>
     <button id="clearCanvas">Clear Canvas</button>
   </div>
@@ -102,7 +104,6 @@
   </div>
 
 <script>
-  // JavaScript unchanged — wiring it to the new button IDs
   const canvasWidthDefault = 500;
   const canvasHeightDefault = 300;
   let canvasWidth = canvasWidthDefault;
@@ -110,6 +111,7 @@
   let canvasBackground = "none";
   let isDrawing = false;
   let squares = [];
+  let size = 50; // Default square size
 
   function createBox() {
     const canvas = document.createElement("canvas");
@@ -117,6 +119,7 @@
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
     canvas.style.border = "1px solid black";
+    document.getElementById("canvasContainer").innerHTML = '';
     document.getElementById("canvasContainer").appendChild(canvas);
   }
 
@@ -125,7 +128,7 @@
       const newHeight = parseInt(document.getElementById("heightInput").value);
       if (!isNaN(newHeight)) {
         canvasHeight = newHeight;
-        document.getElementById("myCanvas").height = newHeight;
+        createBox();
         createCode();
       }
     };
@@ -134,13 +137,13 @@
       const newWidth = parseInt(document.getElementById("widthInput").value);
       if (!isNaN(newWidth)) {
         canvasWidth = newWidth;
-        document.getElementById("myCanvas").width = newWidth;
+        createBox();
         createCode();
       }
     };
 
     document.getElementById("setBackground").onclick = () => {
-      const color = document.getElementById("backgroundInput").value;
+      const color = document.getElementById("backgroundInput").value.trim().toLowerCase();
       const canvas = document.getElementById("myCanvas");
       const validColors = new Set(["white","black","red","orange","yellow","green","blue","purple","none"]);
       if (validColors.has(color)) {
@@ -152,6 +155,14 @@
 
     document.getElementById("drawToggle").onclick = () => {
       isDrawing = !isDrawing;
+    };
+    
+    document.getElementById("squareSize").onclick = () => {
+      const newSize = parseInt(document.getElementById("squareSizeInput").value);
+      if (!isNaN(newSize)) {
+        size = newSize;
+        createCode();
+      }
     };
 
     document.getElementById("clearCanvas").onclick = () => {
@@ -166,26 +177,26 @@
       const canvas = document.getElementById("myCanvas");
       if (!canvas || e.target !== canvas || !isDrawing) return;
       const ctx = canvas.getContext("2d");
-      const rectSize = 50;
-      const rectX = e.offsetX - rectSize / 2;
-      const rectY = e.offsetY - rectSize / 2;
+      const rectX = e.offsetX - size / 2;
+      const rectY = e.offsetY - size / 2;
 
       ctx.fillStyle = "black";
-      ctx.fillRect(rectX, rectY, rectSize, rectSize);
-      squares.push({x: rectX, y: rectY});
+      ctx.fillRect(rectX, rectY, size, size);
+      squares.push({x: rectX, y: rectY, s: size});
       createCode();
     });
   }
 
   function createCode() {
-    let squareCode = squares.map(sq => `ctx.fillRect(${sq.x}, ${sq.y}, 50, 50);<br>`).join("");
+    let squareCode = squares.map(sq => `ctx.fillRect(${sq.x}, ${sq.y}, ${sq.s}, ${sq.s});<br>`).join("");
     let code = `&lt;!DOCTYPE html&gt;<br>&lt;html&gt;<br>&lt;head&gt;&lt;/head&gt;<br>&lt;body&gt;<br>&lt;script&gt;<br>
     const canvas = document.createElement('canvas');<br>
     const ctx = canvas.getContext("2d");<br>
     canvas.width = ${canvasWidth};<br>
     canvas.height = ${canvasHeight};<br>
     canvas.style.backgroundColor = '${canvasBackground}';<br>
-    ctx.fillStyle = "black";<br>${squareCode}document.body.appendChild(canvas);<br>
+    ctx.fillStyle = "black";<br>
+    ${squareCode}document.body.appendChild(canvas);<br>
     &lt;/script&gt;<br>&lt;/body&gt;<br>&lt;/html&gt;`;
     document.getElementById("codeText").innerHTML = code;
   }
