@@ -17,3 +17,8 @@
             font-family: "Comic Sans MS", "Comic Sans", cursive;
             font-size: 25px;
         }
+        #codeBox {
+              top: 500px;
+              left: 50%;
+              transform: translateX(-50%);
+        }
