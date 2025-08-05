@@ -18,7 +18,8 @@
             font-size: 25px;
         }
         #codeBox {
-              top: 500px;
-              left: 50%;
-              transform: translateX(-50%);
+            position: absolute;
+            top: 500px;
+            left: 50%;
+            transform: translateX(-50%);
         }
