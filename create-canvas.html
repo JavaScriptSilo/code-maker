@@ -94,6 +94,7 @@
     <input type="text" id="squareSizeInput" placeholder="Enter Square Size">
     <button id="squareSize">Change Square Size</button>
     <button id="drawToggle">Toggle Square Drawing</button>
+    <button id="newCanvas">New Frame</button>
     <button id="clearCanvas">Clear Canvas</button>
   </div>
   
@@ -112,45 +113,87 @@
   let isDrawing = false;
   let squares = [];
   let size = 50; // Default square size
+  let canvases = [];
+  let activeCanvasId = null;
+
 
   function createBox() {
-    const canvas = document.createElement("canvas");
-    canvas.id = "myCanvas";
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
-    canvas.style.border = "1px solid black";
-    document.getElementById("canvasContainer").innerHTML = '';
-    document.getElementById("canvasContainer").appendChild(canvas);
+      const canvas = document.createElement("canvas");
+      canvas.id = "canvas0"; // Use a consistent ID
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+      canvas.style.border = "1px solid black";
+      canvas.style.backgroundColor = canvasBackground === "" ? "powderblue" : canvasBackground;
+
+      canvas.onclick = () => {
+          activeCanvasId = canvas.id;
+          canvases.forEach(c => {
+          document.getElementById(c.id).style.boxShadow = "none";
+          });
+          canvas.style.boxShadow = "0 0 10px 2px yellow";
+          createCode();
+      };
+
+      document.getElementById("canvasContainer").innerHTML = '';
+      document.getElementById("canvasContainer").appendChild(canvas);
+
+      // Track the canvas
+      canvases = [{
+          id: canvas.id,
+          squares: [],
+          size: size,
+          background: canvasBackground
+      }];
+
+    activeCanvasId = canvas.id;
   }
 
+
   function setupControls() {
-    document.getElementById("setHeight").onclick = () => {
-      const newHeight = parseInt(document.getElementById("heightInput").value);
-      if (!isNaN(newHeight)) {
-        canvasHeight = newHeight;
-        createBox();
-        createCode();
-      }
+    document.getElementById("setWidth").onclick = () => {
+        const newWidth = parseInt(document.getElementById("widthInput").value);
+        if (isNaN(newWidth) || !activeCanvasId) return;
+
+        const canvas = document.getElementById(activeCanvasId);
+        const canvasData = canvases.find(c => c.id === activeCanvasId);
+
+        canvas.width = newWidth;
+        canvasData.width = newWidth;
+        canvasWidth = newWidth; // Optional: update global default
+
+        createCode(canvasData);
     };
 
-    document.getElementById("setWidth").onclick = () => {
-      const newWidth = parseInt(document.getElementById("widthInput").value);
-      if (!isNaN(newWidth)) {
-        canvasWidth = newWidth;
-        createBox();
-        createCode();
-      }
+    document.getElementById("setHeight").onclick = () => {
+        const newHeight = parseInt(document.getElementById("heightInput").value);
+        if (isNaN(newHeight) || !activeCanvasId) return;
+
+        const canvas = document.getElementById(activeCanvasId);
+        const canvasData = canvases.find(c => c.id === activeCanvasId);
+
+        canvas.height = newHeight;
+        canvasData.height = newHeight;
+        canvasHeight = newHeight; // Optional: update global default
+
+        createCode(canvasData);
     };
+
+
 
     document.getElementById("setBackground").onclick = () => {
-      const color = document.getElementById("backgroundInput").value.trim().toLowerCase();
-      const canvas = document.getElementById("myCanvas");
-      const validColors = new Set(["white","black","red","orange","yellow","green","blue","purple","none"]);
-      if (validColors.has(color)) {
-        canvas.style.backgroundColor = color === "none" ? "powderblue" : color;
-        canvasBackground = color === "none" ? "" : color;
-        createCode();
-      }
+        const color = document.getElementById("backgroundInput").value.trim().toLowerCase();
+        const validColors = new Set(["white", "black", "red", "orange", "yellow", "green", "blue", "purple", "none"]);
+
+        if (!activeCanvasId || !validColors.has(color)) return;
+
+        const canvas = document.getElementById(activeCanvasId);
+        const canvasData = canvases.find(c => c.id === activeCanvasId);
+
+        const finalColor = color === "none" ? "powderblue" : color;
+        canvas.style.backgroundColor = finalColor;
+        canvasData.background = finalColor;
+
+        createCode(canvasData);
     };
 
     document.getElementById("drawToggle").onclick = () => {
@@ -166,38 +209,84 @@
     };
 
     document.getElementById("clearCanvas").onclick = () => {
-      const canvas = document.getElementById("myCanvas");
-      const ctx = canvas.getContext("2d");
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      squares = [];
-      createCode();
+        if (!activeCanvasId) return;
+        const canvas = document.getElementById(activeCanvasId);
+        const ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const canvasData = canvases.find(c => c.id === activeCanvasId);
+        canvasData.squares = [];
+
+        createCode(canvasData);
     };
 
-    document.addEventListener("click", function(e) {
-      const canvas = document.getElementById("myCanvas");
-      if (!canvas || e.target !== canvas || !isDrawing) return;
-      const ctx = canvas.getContext("2d");
-      const rectX = e.offsetX - size / 2;
-      const rectY = e.offsetY - size / 2;
 
-      ctx.fillStyle = "black";
-      ctx.fillRect(rectX, rectY, size, size);
-      squares.push({x: rectX, y: rectY, s: size});
-      createCode();
+    document.addEventListener("click", function(e) {
+        if (!isDrawing || !activeCanvasId) return;
+
+        const canvas = document.getElementById(activeCanvasId);
+        if (!canvas || e.target !== canvas) return;
+
+        const ctx = canvas.getContext("2d");
+        const rectX = e.offsetX - size / 2;
+        const rectY = e.offsetY - size / 2;
+
+        ctx.fillStyle = "black";
+        ctx.fillRect(rectX, rectY, size, size);
+
+        const canvasData = canvases.find(c => c.id === activeCanvasId);
+        canvasData.squares.push({x: rectX, y: rectY, s: size});
+
+        createCode(canvasData);
     });
+
+    let idNum = 0;
+    let newFrameBttn = document.getElementById("newCanvas");
+    newFrameBttn.onclick = function() {
+        idNum += 1;
+        const canvas = document.createElement("canvas");
+        canvas.id = `canvas${idNum}`;
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+        canvas.style.border = "1px solid black";
+        canvas.style.marginTop = "30px";
+        canvas.style.backgroundColor = canvasBackground === "" ? "powderblue" : canvasBackground;
+
+        canvas.onclick = () => {
+            activeCanvasId = canvas.id;
+            canvases.forEach(c => {
+                document.getElementById(c.id).style.boxShadow = "none";
+            });
+            canvas.style.boxShadow = "0 0 10px 2px yellow";
+            createCode();
+        };
+
+        canvases.push({
+            id: canvas.id,
+            squares: [],
+            size: size,
+            background: canvasBackground
+        });
+
+        document.getElementById("canvasContainer").appendChild(canvas);
+        activeCanvasId = canvas.id;
+    };
+
   }
 
-  function createCode() {
-    let squareCode = squares.map(sq => `ctx.fillRect(${sq.x}, ${sq.y}, ${sq.s}, ${sq.s});<br>`).join("");
+  function createCode(canvasData = canvases.find(c => c.id === activeCanvasId)) {
+    if (!canvasData) return;
+
+    let squareCode = canvasData.squares.map(sq => `ctx.fillRect(${sq.x}, ${sq.y}, ${sq.s}, ${sq.s});<br>`).join("");
     let code = `&lt;!DOCTYPE html&gt;<br>&lt;html&gt;<br>&lt;head&gt;&lt;/head&gt;<br>&lt;body&gt;<br>&lt;script&gt;<br>
-    const canvas = document.createElement('canvas');<br>
-    const ctx = canvas.getContext("2d");<br>
-    canvas.width = ${canvasWidth};<br>
-    canvas.height = ${canvasHeight};<br>
-    canvas.style.backgroundColor = '${canvasBackground}';<br>
-    ctx.fillStyle = "black";<br>
-    ${squareCode}document.body.appendChild(canvas);<br>
-    &lt;/script&gt;<br>&lt;/body&gt;<br>&lt;/html&gt;`;
+        const canvas = document.createElement('canvas');<br>
+        const ctx = canvas.getContext("2d");<br>
+        canvas.width = ${canvasWidth};<br>
+        canvas.height = ${canvasHeight};<br>
+        canvas.style.backgroundColor = '${canvasData.background}';<br>
+        ctx.fillStyle = "black";<br>
+        ${squareCode}document.body.appendChild(canvas);<br>
+        &lt;/script&gt;<br>&lt;/body&gt;<br>&lt;/html&gt;`;
     document.getElementById("codeText").innerHTML = code;
   }
 
