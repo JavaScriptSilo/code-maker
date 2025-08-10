@@ -4,80 +4,6 @@
   <meta charset="UTF-8" />
   <title>Code Maker</title>
   <link rel="stylesheet" href="createCanvas.css"/>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: linear-gradient(120deg, #1e3c72, #2a5298, #00c6ff 90%);
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .topBar {
-      width: 100%;
-      height: 60px;
-      background-color: #2A2D89;
-      display: flex;
-      align-items: center;
-      padding: 0 30px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    }
-
-    #homelink {
-      font-family: "Comic Sans MS", "Comic Sans", cursive;
-      font-size: 26px;
-      color: #fff;
-      text-decoration: none;
-    }
-
-    .controls {
-      margin-top: 80px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-    }
-
-    .controls input, .controls button {
-      padding: 10px 15px;
-      border-radius: 8px;
-      border: none;
-      font-size: 16px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-
-    .controls input {
-      width: 200px;
-    }
-
-    button {
-      background-color: #444;
-      color: white;
-      cursor: pointer;
-      transition: background 0.2s ease-in-out;
-    }
-
-    button:hover {
-      background-color: #666;
-    }
-
-    #codeBox {
-      margin-top: 40px;
-      max-width: 90%;
-      background: rgba(0,0,0,0.4);
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    }
-
-    canvas {
-      margin-top: 30px;
-    }
-  </style>
 </head>
 <body>
   <div class="topBar">
@@ -95,14 +21,25 @@
     <button id="squareSize">Change Square Size</button>
     <button id="drawToggle">Toggle Square Drawing</button>
     <button id="newCanvas">New Frame</button>
+    <button id="dupLastCanvas">Duplicate Last Canvas</button>
     <button id="clearCanvas">Clear Canvas</button>
   </div>
-  
+ 
   <div id="canvasContainer"></div>
 
-  <div id="codeBox">
-    <p id="codeText"></p>
+  <div id="codeBoxesContainer">
+    <div id="codeBox">
+        <button class="copyBtn" data-target="codeText">Copy HTML Code</button>
+        <p id="codeText"></p>
+    </div>
+
+    <div id="codeBoxTwo">
+        <button class="copyBtn" data-target="codeTextTwo">Copy Frame Code</button>
+        <p id="codeTextTwo"></p>
+    </div>
   </div>
+
+<script src="/home/supasilo475/createCanvasCopyButtonCode.js"></script>
 
 <script>
   const canvasWidthDefault = 500;
@@ -112,14 +49,16 @@
   let canvasBackground = "none";
   let isDrawing = false;
   let squares = [];
+  let clearRectArray = [];
   let size = 50; // Default square size
   let canvases = [];
   let activeCanvasId = null;
-
+  let ffArray = [];
+  let frameNum = 0;
 
   function createBox() {
       const canvas = document.createElement("canvas");
-      canvas.id = "canvas0"; // Use a consistent ID
+      canvas.id = "canvas0";
       canvas.width = canvasWidth;
       canvas.height = canvasHeight;
       canvas.style.border = "1px solid black";
@@ -151,32 +90,52 @@
 
   function setupControls() {
     document.getElementById("setWidth").onclick = () => {
-        const newWidth = parseInt(document.getElementById("widthInput").value);
-        if (isNaN(newWidth) || !activeCanvasId) return;
+      const newWidth = parseInt(document.getElementById("widthInput").value);
+      if (isNaN(newWidth) || !activeCanvasId) return;
 
-        const canvas = document.getElementById(activeCanvasId);
-        const canvasData = canvases.find(c => c.id === activeCanvasId);
+      const canvas = document.getElementById(activeCanvasId);
+      const ctx = canvas.getContext("2d");
 
-        canvas.width = newWidth;
-        canvasData.width = newWidth;
-        canvasWidth = newWidth; // Optional: update global default
+      // Save current image
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-        createCode(canvasData);
-    };
+      // Resize canvas
+      canvas.width = newWidth;
+
+      // Restore image
+      ctx.putImageData(imageData, 0, 0);
+
+      const canvasData = canvases.find(c => c.id === activeCanvasId);
+      canvasData.width = newWidth;
+      canvasWidth = newWidth;
+
+      createCode(canvasData);
+};
+
 
     document.getElementById("setHeight").onclick = () => {
-        const newHeight = parseInt(document.getElementById("heightInput").value);
-        if (isNaN(newHeight) || !activeCanvasId) return;
+      const newHeight = parseInt(document.getElementById("heightInput").value);
+      if (isNaN(newHeight) || !activeCanvasId) return;
 
-        const canvas = document.getElementById(activeCanvasId);
-        const canvasData = canvases.find(c => c.id === activeCanvasId);
+      const canvas = document.getElementById(activeCanvasId);
+      const ctx = canvas.getContext("2d");
 
-        canvas.height = newHeight;
-        canvasData.height = newHeight;
-        canvasHeight = newHeight; // Optional: update global default
+      // Save current image
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-        createCode(canvasData);
+      // Resize canvas
+      canvas.height = newHeight;
+
+      // Restore image
+      ctx.putImageData(imageData, 0, 0);
+
+      const canvasData = canvases.find(c => c.id === activeCanvasId);
+      canvasData.height = newHeight;
+      canvasHeight = newHeight;
+
+      createCode(canvasData);
     };
+
 
 
 
@@ -199,7 +158,7 @@
     document.getElementById("drawToggle").onclick = () => {
       isDrawing = !isDrawing;
     };
-    
+   
     document.getElementById("squareSize").onclick = () => {
       const newSize = parseInt(document.getElementById("squareSizeInput").value);
       if (!isNaN(newSize)) {
@@ -216,6 +175,7 @@
 
         const canvasData = canvases.find(c => c.id === activeCanvasId);
         canvasData.squares = [];
+        clearRectArray = [];
 
         createCode(canvasData);
     };
@@ -244,6 +204,8 @@
     let newFrameBttn = document.getElementById("newCanvas");
     newFrameBttn.onclick = function() {
         idNum += 1;
+        ffArray.push(` frame${frameNum}`);
+        frameNum += 1;
         const canvas = document.createElement("canvas");
         canvas.id = `canvas${idNum}`;
         canvas.width = canvasWidth;
@@ -265,30 +227,112 @@
             id: canvas.id,
             squares: [],
             size: size,
-            background: canvasBackground
+            background: canvasBackground,
+            width: canvasWidth,
+            height: canvasHeight
         });
 
         document.getElementById("canvasContainer").appendChild(canvas);
         activeCanvasId = canvas.id;
     };
+    
+    document.getElementById("dupLastCanvas").onclick = function() {
+        if (canvases.length === 0) return; // No canvas to duplicate
 
+        idNum += 1;
+        ffArray.push(` frame${frameNum}`);
+        frameNum += 1;
+
+        // Get the last canvas and its data
+        const lastCanvasData = canvases[canvases.length - 1];
+        const lastCanvas = document.getElementById(lastCanvasData.id);
+
+        // Create new canvas element
+        const canvas = document.createElement("canvas");
+        canvas.id = `canvas${idNum}`;
+        canvas.width = lastCanvas.width;
+        canvas.height = lastCanvas.height;
+        canvas.style.border = "1px solid black";
+        canvas.style.marginTop = "30px";
+        canvas.style.backgroundColor = lastCanvas.style.backgroundColor;
+
+        // Copy visual content
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(lastCanvas, 0, 0);
+
+        // Copy metadata
+        const copiedSquares = lastCanvasData.squares.map(sq => ({ ...sq }));
+        const copiedSize = lastCanvasData.size;
+        const copiedBackground = lastCanvasData.background;
+
+        // Add click behavior
+        canvas.onclick = () => {
+            activeCanvasId = canvas.id;
+            canvases.forEach(c => {
+            document.getElementById(c.id).style.boxShadow = "none";
+            });
+            canvas.style.boxShadow = "0 0 10px 2px yellow";
+            createCode();
+        };
+
+        // Add to DOM and data array
+        document.getElementById("canvasContainer").appendChild(canvas);
+        canvases.push({
+            id: canvas.id,
+            squares: copiedSquares,
+            size: copiedSize,
+            background: copiedBackground,
+            width: canvas.width,
+            height: canvas.height
+        });
+
+        activeCanvasId = canvas.id;
+        createCode();
+    };
+    
   }
 
   function createCode(canvasData = canvases.find(c => c.id === activeCanvasId)) {
     if (!canvasData) return;
 
-    let squareCode = canvasData.squares.map(sq => `ctx.fillRect(${sq.x}, ${sq.y}, ${sq.s}, ${sq.s});<br>`).join("");
-    let code = `&lt;!DOCTYPE html&gt;<br>&lt;html&gt;<br>&lt;head&gt;&lt;/head&gt;<br>&lt;body&gt;<br>&lt;script&gt;<br>
-        const canvas = document.createElement('canvas');<br>
-        const ctx = canvas.getContext("2d");<br>
-        canvas.width = ${canvasWidth};<br>
-        canvas.height = ${canvasHeight};<br>
-        canvas.style.backgroundColor = '${canvasData.background}';<br>
-        ctx.fillStyle = "black";<br>
-        ${squareCode}document.body.appendChild(canvas);<br>
-        &lt;/script&gt;<br>&lt;/body&gt;<br>&lt;/html&gt;`;
-    document.getElementById("codeText").innerHTML = code;
+    let squareCode = canvasData.squares.map(sq => `ctx.fillRect(${sq.x}, ${sq.y}, ${sq.s}, ${sq.s});`).join("<br>");
+    let frameCode = `ctx.clearRect(0, 0, ${canvasWidth}, ${canvasHeight});<br>${squareCode}`;
+
+    // Store this frame's code in the array
+    const existingIndex = clearRectArray.findIndex(entry => entry.id === canvasData.id);
+    if (existingIndex !== -1) {
+      clearRectArray[existingIndex].code = frameCode;
+    } else {
+      clearRectArray.push({ id: canvasData.id, code: frameCode });
+    }
+    
+    // Display all frame codes in codeBoxTwo
+     let combinedCode = clearRectArray.map((entry, index) => {
+       return `function frame${index} () {<br>${entry.code}<br>} ;<br>`;
+     }).join("");
+
+    // Display full HTML code in codeBox
+    let fullCode = `&lt;!DOCTYPE html&gt;<br>&lt;html&gt;<br>&lt;head&gt;&lt;/head&gt;<br>&lt;body&gt;<br>&lt;script&gt;<br>
+      const canvas = document.createElement('canvas');<br>
+      const ctx = canvas.getContext("2d");<br>
+      canvas.width = ${canvasWidth};<br>
+      canvas.height = ${canvasHeight};<br>
+      canvas.style.backgroundColor = '${canvasData.background}';<br>
+      ctx.fillStyle = "black";<br>
+      ${combinedCode}
+      const frames = [${ffArray}];<br>
+      for (let i = 0; i < 1000; i++) {<br>
+      setTimeout(() => {<br>
+      frames[i % frames.length]();<br>
+      }, i * 500);<br>
+      };<br>
+      document.body.appendChild(canvas);<br>
+      &lt;/script&gt;<br>&lt;/body&gt;<br>&lt;/html&gt;`;
+      document.getElementById("codeText").innerHTML = fullCode;
+
+     document.getElementById("codeTextTwo").innerHTML = combinedCode;
   }
+
 
   window.onload = () => {
     createBox();
