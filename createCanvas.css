@@ -1,1 +1,72 @@
+body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(120deg, #1e3c72, #2a5298, #00c6ff 90%);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
+    .topBar {
+      width: 100%;
+      height: 60px;
+      background-color: #2A2D89;
+      display: flex;
+      align-items: center;
+      padding: 0 30px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    #homelink {
+      font-family: "Comic Sans MS", "Comic Sans", cursive;
+      font-size: 26px;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .controls {
+      margin-top: 80px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .controls input, .controls button {
+      padding: 10px 15px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .controls input {
+      width: 200px;
+    }
+
+    button {
+      background-color: #444;
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s ease-in-out;
+    }
+
+    button:hover {
+      background-color: #666;
+    }
+
+    #codeBox, #codeBoxTwo {
+      margin-top: 40px;
+      max-width: 90%;
+      background: rgba(0,0,0,0.4);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    canvas {
+      margin-top: 30px;
+    }
