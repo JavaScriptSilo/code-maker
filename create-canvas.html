@@ -19,6 +19,8 @@
     <button id="setBackground">Set Background</button>
     <input type="text" id="squareSizeInput" placeholder="Enter Square Size">
     <button id="squareSize">Change Square Size</button>
+    <input type="text" id="msBetweenFramesInput"></input>
+    <button id="msBetweenFramesButton"></button>
     <button id="drawToggle">Toggle Square Drawing</button>
     <button id="newCanvas">New Frame</button>
     <button id="dupLastCanvas">Duplicate Last Canvas</button>
@@ -55,6 +57,7 @@
   let activeCanvasId = null;
   let ffArray = [];
   let frameNum = 0;
+  let msBetweenFrames = 500;
 
   function createBox() {
       const canvas = document.createElement("canvas");
@@ -135,10 +138,7 @@
 
       createCode(canvasData);
     };
-
-
-
-
+    
     document.getElementById("setBackground").onclick = () => {
         const color = document.getElementById("backgroundInput").value.trim().toLowerCase();
         const validColors = new Set(["white", "black", "red", "orange", "yellow", "green", "blue", "purple", "none"]);
@@ -236,6 +236,10 @@
         activeCanvasId = canvas.id;
       createCode();
     };
+
+    document.getElementById("msBetweenFramesButton").onclick = function () {
+        msBetweenFrames = document.getElementById("msBetweenFramesInput").textContext;
+    };
     
     document.getElementById("dupLastCanvas").onclick = function() {
         if (canvases.length === 0) return; // No canvas to duplicate
@@ -325,7 +329,7 @@
       for (let i = 0; i < 1000; i++) {<br>
       setTimeout(() => {<br>
       frames[i % frames.length]();<br>
-      }, i * 500);<br>
+      }, i * ${msBetweenFrames});<br>
       };<br>
       document.body.appendChild(canvas);<br>
       &lt;/script&gt;<br>&lt;/body&gt;<br>&lt;/html&gt;`;
