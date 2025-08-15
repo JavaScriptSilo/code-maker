@@ -19,8 +19,8 @@
     <button id="setBackground">Set Background</button>
     <input type="text" id="squareSizeInput" placeholder="Enter Square Size">
     <button id="squareSize">Change Square Size</button>
-    <input type="text" id="msBetweenFramesInput"></input>
-    <button id="msBetweenFramesButton"></button>
+    <input type="text" id="msBetweenFramesInput">Set Time</input>
+    <button id="msBetweenFramesButton">Set Time In Between Frames</button>
     <button id="drawToggle">Toggle Square Drawing</button>
     <button id="newCanvas">New Frame</button>
     <button id="dupLastCanvas">Duplicate Last Canvas</button>
@@ -238,7 +238,7 @@
     };
 
     document.getElementById("msBetweenFramesButton").onclick = function () {
-        msBetweenFrames = document.getElementById("msBetweenFramesInput").textContext;
+        msBetweenFrames = document.getElementById("msBetweenFramesInput").value;
     };
     
     document.getElementById("dupLastCanvas").onclick = function() {
