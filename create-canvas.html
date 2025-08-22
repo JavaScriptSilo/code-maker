@@ -205,7 +205,7 @@
     let newFrameBttn = document.getElementById("newCanvas");
     newFrameBttn.onclick = function() {
         idNum += 1;
-        ffArray.push(` frame${frameNum}`);
+        ffArray.push(` frame${frameNum + 1}`);
         frameNum += 1;
         const canvas = document.createElement("canvas");
         canvas.id = `canvas${idNum}`;
