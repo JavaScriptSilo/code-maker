@@ -58,6 +58,7 @@
   let ffArray = [];
   let frameNum = 0;
   let msBetweenFrames = 500;
+  let isMouseDown = false;
   ffArray.push("frame0");
 
   function createBox() {
@@ -157,7 +158,7 @@
     };
 
     document.getElementById("drawToggle").onclick = () => {
-      isDrawing = !isDrawing;
+  	isDrawing = !isDrawing;
     };
    
     document.getElementById("squareSize").onclick = () => {
@@ -180,26 +181,6 @@
 
         createCode(canvasData);
     };
-
-
-    document.addEventListener("click", function(e) {
-        if (!isDrawing || !activeCanvasId) return;
-
-        const canvas = document.getElementById(activeCanvasId);
-        if (!canvas || e.target !== canvas) return;
-
-        const ctx = canvas.getContext("2d");
-        const rectX = e.offsetX - size / 2;
-        const rectY = e.offsetY - size / 2;
-
-        ctx.fillStyle = "black";
-        ctx.fillRect(rectX, rectY, size, size);
-
-        const canvasData = canvases.find(c => c.id === activeCanvasId);
-        canvasData.squares.push({x: rectX, y: rectY, s: size});
-
-        createCode(canvasData);
-    });
 
     let idNum = 0;
     let newFrameBttn = document.getElementById("newCanvas");
@@ -339,11 +320,50 @@
      document.getElementById("codeTextTwo").innerHTML = combinedCode;
   }
 
+  function setupDragDrawing() {
+  const canvasContainer = document.getElementById("canvasContainer");
+
+  canvasContainer.addEventListener("mousedown", function(e) {
+    if (!isDrawing || !activeCanvasId) return;
+    if (e.target.tagName !== "CANVAS") return;
+    isMouseDown = true;
+    drawSquare(e);
+  });
+
+  window.addEventListener("mouseup", function() {
+    isMouseDown = false;
+  });
+
+  canvasContainer.addEventListener("mousemove", function(e) {
+    if (!isDrawing || !activeCanvasId || !isMouseDown) return;
+    if (e.target.tagName !== "CANVAS") return;
+    drawSquare(e);
+  });
+}
+
+// Helper function to draw a square at the mouse position
+function drawSquare(e) {
+  const canvas = document.getElementById(activeCanvasId);
+  const ctx = canvas.getContext("2d");
+  const rect = canvas.getBoundingClientRect();
+  const rectX = e.clientX - rect.left - size / 2;
+  const rectY = e.clientY - rect.top - size / 2;
+
+  ctx.fillStyle = "black";
+  ctx.fillRect(rectX, rectY, size, size);
+
+  const canvasData = canvases.find(c => c.id === activeCanvasId);
+  canvasData.squares.push({x: rectX, y: rectY, s: size});
+  createCode(canvasData);
+}
+
   window.onload = () => {
     createBox();
     setupControls();
+    setupDragDrawing();
     createCode();
-  };
+};
+
 </script>
 </body>
 </html>
