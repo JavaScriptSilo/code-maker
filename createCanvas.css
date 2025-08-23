@@ -70,3 +70,16 @@ body {
     canvas {
       margin-top: 30px;
     }
+    #codeBoxesContainer {
+      display: flex;
+      gap: 24px;         /* space between the code boxes */
+      width: 90%;        /* optional: matches your max-width on the boxes */
+      justify-content: center; /* center them horizontally */
+      margin-top: 40px;  /* move both boxes down together */
+    }
+
+    #codeBox, #codeBoxTwo {
+      margin-top: 0;     /* remove individual top margin, now handled by parent */
+      flex: 1 1 0;       /* allow boxes to grow/shrink equally */
+      min-width: 0;      /* prevents overflow in flexbox */
+    }
