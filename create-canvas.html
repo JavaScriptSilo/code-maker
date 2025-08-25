@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,6 +25,7 @@
     <button id="drawToggle">Toggle Square Drawing</button>
     <button id="newCanvas">New Frame</button>
     <button id="dupLastCanvas">Duplicate Last Canvas</button>
+    <button id="deleteLastCanvas">Delete Last Canvas</button>
     <button id="clearCanvas">Clear Canvas</button>
   </div>
  
@@ -94,6 +96,42 @@
 
 
   function setupControls() {
+    document.getElementById("deleteLastCanvas").onclick = function() {
+    if (canvases.length === 0) return; // No canvas to delete
+
+    // Remove the canvas element from DOM
+    const lastCanvasData = canvases[canvases.length - 1];
+    const lastCanvas = document.getElementById(lastCanvasData.id);
+    if (lastCanvas) {
+        lastCanvas.remove();
+    }
+
+    // Remove from canvases array
+    canvases.pop();
+
+    // Remove from clearRectArray (frame codes)
+    const clearIndex = clearRectArray.findIndex(entry => entry.id === lastCanvasData.id);
+    if (clearIndex !== -1) {
+        clearRectArray.splice(clearIndex, 1);
+    }
+
+    // Remove from ffArray (frame names)
+    ffArray.pop();
+
+    // Update frameNum if needed
+    if (frameNum > 0) frameNum--;
+
+    // Update activeCanvasId: select previous canvas or null
+    if (canvases.length > 0) {
+        activeCanvasId = canvases[canvases.length - 1].id;
+        document.getElementById(activeCanvasId).style.boxShadow = "0 0 10px 2px yellow";
+    } else {
+        activeCanvasId = null;
+    }
+
+    // Update code display
+    createCode();
+};
     document.getElementById("setWidth").onclick = () => {
       const newWidth = parseInt(document.getElementById("widthInput").value);
       if (isNaN(newWidth) || !activeCanvasId) return;
@@ -227,7 +265,7 @@
         if (canvases.length === 0) return; // No canvas to duplicate
 
         idNum += 1;
-        ffArray.push(` frame${frameNum}`);
+        ffArray.push(` frame${frameNum + 1}`);
         frameNum += 1;
 
         // Get the last canvas and its data
